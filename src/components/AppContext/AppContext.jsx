@@ -9,16 +9,29 @@ export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
   const [query, setQuery] = useState(null);
-  const [trending, setTrending] = useState([]);
-  const [movieId, setMovieId] = useState(0);
+  const [movieId, setMovieId] = useState(null);
   const [movieTitle, setMovieTitle] = useState('');
   const [searchResponse, setSearchResponse] = useState([]);
   const [movieDetails, setMovieDetails] = useState({});
 
-  const trendingSearch = `${BASE_URL}3/trending/movie/day?language=en-US`;
-  const titleSearch = `${BASE_URL}3/search/movie?query=${movieTitle}&include_adult=false&language=en-US&page=1`;
-  const idSearch = `${BASE_URL}3/movie/${movieId}?language=en-US`;
-  const imageSearch = `${BASE_URL}3/movie/${movieId}/images`;
+  const fetcher = (search, setHook) => {
+    return axios(search, options)
+      .then(response => {
+        const data = response.data;
+        console.log(data);
+        console.log(data.results);
+        setHook(data);
+      })
+      .catch(error => {
+        console.error('error:' + error);
+      });
+  };
+
+  //   useEffect(() => {
+  //     fetcher(idSearch, setMovieDetails);
+  //     console.log(movieDetails);
+  //   }, [movieId]);
+
   const options = {
     method: 'GET',
     headers: {
@@ -28,37 +41,10 @@ export const AppProvider = ({ children }) => {
     },
   };
 
-  const fetcher = (search, setHook) => {
-    return axios(search, options)
-      .then(response => {
-        const data = response.data;
-        console.log(data);
-        console.log(data.results);
-        setHook === setMovieDetails ? setHook(data) : setHook(data.results);
-      })
-      .catch(error => {
-        console.error('error:' + error);
-      });
-  };
-
-  useEffect(() => {
-    fetcher(trendingSearch, setTrending);
-  }, []);
-
-  useEffect(() => {
-    fetcher(titleSearch, setSearchResponse);
-  }, [movieTitle]);
-
-  useEffect(() => {
-    fetcher(idSearch, setMovieDetails);
-    console.log(movieDetails);
-  }, [movieId]);
-
   const appValue = {
+    options,
     query,
     setQuery,
-    trending,
-    setTrending,
     movieId,
     setMovieId,
     movieTitle,
@@ -67,6 +53,7 @@ export const AppProvider = ({ children }) => {
     setSearchResponse,
     movieDetails,
     setMovieDetails,
+    fetcher,
   };
 
   return <AppContext.Provider value={appValue}>{children}</AppContext.Provider>;

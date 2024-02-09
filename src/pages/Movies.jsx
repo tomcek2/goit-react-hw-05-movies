@@ -1,65 +1,33 @@
-import { Link, Outlet } from 'react-router-dom';
-import React, { useRef } from 'react';
-import { useAppContext } from 'components/AppContext/AppContext';
+import React, { useRef, useState } from 'react';
+import { MovieResponseList } from 'components/MovieResponseList/MovieResponseList';
 
 export const Movies = () => {
+  const [movieTitle, setMovieTitle] = useState('');
+  const [isResponse, setIsResponse] = useState(false);
   const inputRef = useRef();
-  const { setMovieTitle, searchResponse, setMovieId } = useAppContext();
 
   const handleSearch = () => {
-    console.log(inputRef.current.value);
     setMovieTitle(inputRef.current.value);
-  };
-  const handleClick = id => {
-    setMovieId(id);
+    if (
+      inputRef.current.value.length > 0 &&
+      inputRef.current.value !== movieTitle
+    ) {
+      setIsResponse(true);
+    } else {
+      setIsResponse(false);
+    }
   };
 
   const handleSubmit = e => {
     e.preventDefault();
   };
   return (
-    <main>
+    <>
       <form onSubmit={handleSubmit}>
         <input type="text" ref={inputRef}></input>
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={() => handleSearch()}>Search</button>
       </form>
-      <ul>
-        {searchResponse.map(finds => (
-          <li key={finds.id}>
-            <Link to={`${finds.id}`} onClick={() => handleClick(finds.id)}>
-              {finds.original_title}
-            </Link>
-            <img src={finds.poster_path} width="20px" height="30px" alt="" />
-          </li>
-        ))}
-      </ul>
-
-      {/* <h1>About Us</h1>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus
-        laborum amet ab cumque sit nihil dolore modi error repudiandae
-        perspiciatis atque voluptas corrupti, doloribus ex maiores quam magni
-        mollitia illum dolor quis alias in sequi quod. Sunt ex numquam hic
-        asperiores facere natus sapiente cum neque laudantium quam, expedita
-        voluptates atque quia aspernatur saepe illo, rem quasi praesentium
-        aliquid sed inventore obcaecati veniam? Nisi magnam vero, dolore
-        praesentium totam ducimus similique asperiores culpa, eius amet
-        repudiandae quam ut. Architecto commodi, tempore ut nostrum voluptas
-        dolorum illum voluptatum dolores! Quas perferendis quis alias excepturi
-        eaque voluptatibus eveniet error, nulla rem iusto?
-      </p>
-      <ul>
-        <li>
-          <Link to="mission">Read about our mission</Link>
-        </li>
-        <li>
-          <Link to="team">Get to know the team</Link>
-        </li>
-        <li>
-          <Link to="reviews">Go through the reviews</Link>
-        </li>
-      </ul> */}
-      <Outlet />
-    </main>
+      {isResponse && <MovieResponseList title={movieTitle} />}
+    </>
   );
 };
