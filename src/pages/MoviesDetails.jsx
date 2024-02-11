@@ -1,12 +1,14 @@
-import { Outlet, useParams, useNavigate } from 'react-router-dom';
+import { Outlet, useParams, useLocation } from 'react-router-dom';
 import React, { useState, useEffect, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Loader } from 'components/Loader';
 import { Container, BackLink, Genres, AddInfo } from 'components/Styles.styled';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
-const API_KEY = process.env.REACT_APP_API_KEY;
+const BASE_URL = 'https://api.themoviedb.org/';
+const API_KEY =
+  'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MWNlODk4Njg1Y2Y3Y2YzYWU4OWE5YjY4NDBlNjU1OCIsInN1YiI6IjY1YzEzNDI1MDMxZGViMDE4M2YzYTUwOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.z0M1Gt0gZ7sp1cqOFs9beKTDiVHIn15JzYaDT_F6w7M';
+
 const options = {
   method: 'GET',
   headers: {
@@ -20,6 +22,9 @@ const MoviesDetails = () => {
   const [movieDetails, setMovieDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [genres, setGenres] = useState([]);
+
+  const location = useLocation();
+  const backLinkHref = location.state?.from ?? '/';
 
   const idSearch = `${BASE_URL}3/movie/${movieId}?language=en-US`;
 
@@ -38,11 +43,6 @@ const MoviesDetails = () => {
     getMovieDetails();
   }, []);
 
-  const navigate = useNavigate();
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
   if (loading) {
     return <Loader />;
   }
@@ -51,9 +51,7 @@ const MoviesDetails = () => {
     <>
       <Container>
         <div>
-          <BackLink to="" onClick={() => handleGoBack()}>
-            Go back
-          </BackLink>
+          <BackLink to={backLinkHref}>Go back</BackLink>
           <img
             width="200"
             height="300"

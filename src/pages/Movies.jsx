@@ -9,7 +9,7 @@ const Movies = () => {
   const [movieTitle, setMovieTitle] = useState('');
   const [isResponse, setIsResponse] = useState(false);
   const inputRef = useRef();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const searchTitle = searchParams.get('search');
@@ -26,8 +26,7 @@ const Movies = () => {
     if (newTitle.length > 0 && newTitle !== movieTitle) {
       setMovieTitle(newTitle);
       setIsResponse(true);
-
-      searchParams.set('search', newTitle);
+      setSearchParams({ search: newTitle });
     } else {
       setIsResponse(false);
     }
