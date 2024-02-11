@@ -1,8 +1,8 @@
 import { React, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { List, ListLink, Title } from 'components/Styles.styled';
 
-import { useAppContext } from 'components/AppContext/AppContext';
+import { useAppContext } from 'components/AppContext';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -27,13 +27,20 @@ export const Home = () => {
   }, []);
 
   return (
-    <ul>
+    <List>
       {trending.map(trend => (
         <li key={trend.id}>
-          <Link to={`movies/${trend.id}`}>{trend.original_title}</Link>
-          <img src={trend.poster_path} width="20px" height="30px" alt="" />
+          <ListLink to={`movies/${trend.id}`}>
+            <img
+              width="200"
+              height="300"
+              src={`https://image.tmdb.org/t/p/w500/${trend.poster_path || ''}`}
+              alt=""
+            />
+            <Title>{trend.original_title}</Title>
+          </ListLink>
         </li>
       ))}
-    </ul>
+    </List>
   );
 };

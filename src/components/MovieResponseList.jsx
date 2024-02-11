@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useAppContext } from 'components/AppContext/AppContext';
+import { useAppContext } from 'components/AppContext';
+import { List, ListLink, Title } from 'components/Styles.styled';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -20,6 +20,11 @@ export const MovieResponseList = ({ title }) => {
         console.log(titleSearch);
         console.log(data.results);
         setSearchResponse(data.results);
+
+        const newURL = `${window.location.pathname}?search=${encodeURIComponent(
+          title
+        )}`;
+        window.history.replaceState(null, '', newURL);
       } catch (error) {
         console.error('error:' + error);
       }
@@ -28,13 +33,20 @@ export const MovieResponseList = ({ title }) => {
   }, [title]);
 
   return (
-    <ul>
+    <List>
       {searchResponse.map(finds => (
-        <li key={finds.id}>
-          <Link to={`${finds.id}`}>{finds.original_title}</Link>
-          <img src={finds.poster_path} width="20px" height="30px" alt="" />
-        </li>
+        <ListLink key={finds.id}>
+          <ListLink to={`${finds.id}`}>
+            <img
+              src={`https://image.tmdb.org/t/p/w500/${finds.poster_path || ''}`}
+              width="200"
+              height="300"
+              alt=""
+            />
+            <Title>{finds.original_title}</Title>
+          </ListLink>
+        </ListLink>
       ))}
-    </ul>
+    </List>
   );
 };

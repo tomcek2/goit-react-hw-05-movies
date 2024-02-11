@@ -1,14 +1,17 @@
-import { useAppContext } from 'components/AppContext/AppContext';
-import { Outlet, useParams } from 'react-router-dom';
+import { useAppContext } from 'components/AppContext';
+import { Outlet, useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Loader } from 'components/Loader';
+import { Container, BackLink, Genres, AddInfo } from 'components/Styles.styled';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export const MoviesDetails = () => {
   const { movieId } = useParams();
-  const [movieDetails, setMovieDetails] = useState([]);
+  const [movieDetails, setMovieDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [genres, setGenres] = useState([]);
   const { options } = useAppContext();
 
@@ -21,48 +24,67 @@ export const MoviesDetails = () => {
         console.log(data);
         setMovieDetails(data);
         setGenres(data.genres);
+        setLoading(false);
       } catch (error) {
         console.error('error:' + error);
+        setLoading(false);
       }
     };
     getMovieDetails();
   }, []);
 
+  const navigate = useNavigate();
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <>
-      <div>
-        <img
-          width="100"
-          height="150"
-          src={`https://image.tmdb.org/t/p/w500/${movieDetails.poster_path}`}
-          alt=""
-        />
+      <Container>
+        <div>
+          <BackLink to="" onClick={() => handleGoBack()}>
+            Go back
+          </BackLink>
+          <img
+            width="200"
+            height="300"
+            src={`https://image.tmdb.org/t/p/w500/${
+              movieDetails.poster_path || ''
+            }`}
+            alt=""
+          />
+        </div>
         <div>
           <h1>
-            "{movieDetails.original_title}" ({movieDetails.release_date})
+            {movieDetails.original_title}
+            {` `}({new Date(movieDetails.release_date).getFullYear()})
           </h1>
-          <p>User score: {movieDetails.vote_average}</p>
+          <p>User score: {Math.round(movieDetails.vote_average * 10)}%</p>
           <h2>Overview</h2>
           <p>{movieDetails.overview}</p>
           <h3>Genres</h3>
 
-          <div>
+          <Genres>
             {genres.map(genre => (
               <p key={genre.id}>{genre.name}</p>
             ))}
-          </div>
+          </Genres>
         </div>
-        <ul>
-          <h3>Additional informations</h3>
-          <li>
-            <Link to="cast">Cast</Link>
-          </li>
-          <li>
-            <Link to="reviews">Reviews</Link>
-          </li>
-        </ul>
-        <Outlet />
-      </div>
+      </Container>
+      <AddInfo>
+        <h3>Additional informations</h3>
+        <li>
+          <Link to="cast">Cast</Link>
+        </li>
+        <li>
+          <Link to="reviews">Reviews</Link>
+        </li>
+      </AddInfo>
+      <Outlet />
     </>
   );
 };

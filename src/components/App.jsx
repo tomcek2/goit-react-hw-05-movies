@@ -4,8 +4,8 @@ import { Route, Routes } from 'react-router-dom';
 import { SharedLayout } from './SharedLayout/SharedLayout';
 import { Movies } from 'pages/Movies';
 import { MoviesDetails } from 'pages/MoviesDetails';
-import { Cast } from './Cast/Cast';
-import { Reviews } from './Reviews/Reviews';
+import { Cast } from './Cast';
+import { Reviews } from './Reviews';
 
 export const App = () => {
   return (
