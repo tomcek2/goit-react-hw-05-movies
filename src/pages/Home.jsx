@@ -1,14 +1,19 @@
-import { React, useEffect, useState } from 'react';
 import axios from 'axios';
+import { React, useEffect, useState } from 'react';
 import { List, ListLink, Title } from 'components/Styles.styled';
 
-import { useAppContext } from 'components/AppContext';
-
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: API_KEY,
+  },
+};
 
-export const Home = () => {
+const Home = () => {
   const [trending, setTrending] = useState([]);
-  const { options } = useAppContext();
 
   const trendingSearch = `${BASE_URL}3/trending/movie/day?language=en-US`;
 
@@ -16,8 +21,6 @@ export const Home = () => {
     const getTrending = async () => {
       try {
         const { data } = await axios(trendingSearch, options);
-        console.log(data);
-        console.log(data.results);
         setTrending(data.results);
       } catch (error) {
         console.error('error:' + error);
@@ -44,3 +47,5 @@ export const Home = () => {
     </List>
   );
 };
+
+export default Home;

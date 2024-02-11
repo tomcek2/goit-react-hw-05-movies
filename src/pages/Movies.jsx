@@ -1,16 +1,17 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { MovieResponseList } from 'components/MovieResponseList';
+import React, { useRef, useState, useEffect, Suspense, lazy } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { FormInput, FormButton } from 'components/Styles.styled';
+import { Loader } from 'components/Loader';
 
-export const Movies = () => {
+const MovieResponseList = lazy(() => import('../components/MovieResponseList'));
+
+const Movies = () => {
   const [movieTitle, setMovieTitle] = useState('');
   const [isResponse, setIsResponse] = useState(false);
   const inputRef = useRef();
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
     const searchTitle = searchParams.get('search');
 
     if (searchTitle && searchTitle !== movieTitle) {
@@ -26,10 +27,7 @@ export const Movies = () => {
       setMovieTitle(newTitle);
       setIsResponse(true);
 
-      const newURL = `${window.location.pathname}?search=${encodeURIComponent(
-        newTitle
-      )}`;
-      window.history.replaceState(null, '', newURL);
+      searchParams.set('search', newTitle);
     } else {
       setIsResponse(false);
     }
@@ -49,7 +47,11 @@ export const Movies = () => {
         ></FormInput>
         <FormButton onClick={() => handleSearch()}>Search</FormButton>
       </form>
-      {isResponse && <MovieResponseList title={movieTitle} />}
+      <Suspense fallback={<Loader />}>
+        {isResponse && <MovieResponseList title={movieTitle} />}
+      </Suspense>
     </>
   );
 };
+
+export default Movies;

@@ -1,14 +1,20 @@
-import { useAppContext } from 'components/AppContext';
 import { useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Review } from './Styles.styled';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: API_KEY,
+  },
+};
 
-export const Reviews = () => {
+const Reviews = () => {
   const { movieId } = useParams();
-  const { options } = useAppContext();
   const [reviews, setReviews] = useState([]);
 
   const reviewsSearch = `${BASE_URL}3/movie/${movieId}/reviews`;
@@ -17,7 +23,6 @@ export const Reviews = () => {
     const getReviews = async () => {
       try {
         const { data } = await axios(reviewsSearch, options);
-        console.log(data.results);
         setReviews(data.results);
       } catch (error) {
         console.error('error:' + error);
@@ -40,3 +45,5 @@ export const Reviews = () => {
     </ul>
   );
 };
+
+export default Reviews;

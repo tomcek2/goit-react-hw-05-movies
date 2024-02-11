@@ -1,14 +1,20 @@
-import { useAppContext } from 'components/AppContext';
 import { useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CastList, ListLink, Title } from './Styles.styled';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: API_KEY,
+  },
+};
 
-export const Cast = () => {
+const Cast = () => {
   const { movieId } = useParams();
-  const { options } = useAppContext();
   const [cast, setCast] = useState([]);
 
   const castSearch = `${BASE_URL}3/movie/${movieId}/credits`;
@@ -17,7 +23,6 @@ export const Cast = () => {
     const getCast = async () => {
       try {
         const { data } = await axios(castSearch, options);
-        console.log(data.cast);
         setCast(data.cast);
       } catch (error) {
         console.error('error:' + error);
@@ -43,3 +48,5 @@ export const Cast = () => {
     </ul>
   );
 };
+
+export default Cast;

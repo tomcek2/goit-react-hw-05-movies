@@ -1,19 +1,25 @@
-import { useAppContext } from 'components/AppContext';
 import { Outlet, useParams, useNavigate } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Loader } from 'components/Loader';
 import { Container, BackLink, Genres, AddInfo } from 'components/Styles.styled';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: API_KEY,
+  },
+};
 
-export const MoviesDetails = () => {
+const MoviesDetails = () => {
   const { movieId } = useParams();
   const [movieDetails, setMovieDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [genres, setGenres] = useState([]);
-  const { options } = useAppContext();
 
   const idSearch = `${BASE_URL}3/movie/${movieId}?language=en-US`;
 
@@ -21,7 +27,6 @@ export const MoviesDetails = () => {
     const getMovieDetails = async () => {
       try {
         const { data } = await axios(idSearch, options);
-        console.log(data);
         setMovieDetails(data);
         setGenres(data.genres);
         setLoading(false);
@@ -84,7 +89,11 @@ export const MoviesDetails = () => {
           <Link to="reviews">Reviews</Link>
         </li>
       </AddInfo>
-      <Outlet />
+      <Suspense fallback={<Loader />}>
+        <Outlet />
+      </Suspense>
     </>
   );
 };
+
+export default MoviesDetails;

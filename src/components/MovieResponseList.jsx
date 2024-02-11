@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAppContext } from 'components/AppContext';
 import { List, ListLink, Title } from 'components/Styles.styled';
+import { useSearchParams } from 'react-router-dom';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: API_KEY,
+  },
+};
 
-export const MovieResponseList = ({ title }) => {
-  console.log(title);
+const MovieResponseList = ({ title }) => {
   const [searchResponse, setSearchResponse] = useState([]);
-  const { options } = useAppContext();
+  const [searchParams] = useSearchParams();
+  const paramTitle = searchParams.get('search');
 
   const titleSearch = `${BASE_URL}3/search/movie?query=${title}&include_adult=false&language=en-US&page=1`;
 
@@ -16,20 +24,13 @@ export const MovieResponseList = ({ title }) => {
     const getTitleList = async () => {
       try {
         const { data } = await axios(titleSearch, options);
-
-        console.log(titleSearch);
-        console.log(data.results);
         setSearchResponse(data.results);
-
-        const newURL = `${window.location.pathname}?search=${encodeURIComponent(
-          title
-        )}`;
-        window.history.replaceState(null, '', newURL);
       } catch (error) {
         console.error('error:' + error);
       }
     };
     getTitleList();
+    searchParams.set('search', paramTitle);
   }, [title]);
 
   return (
@@ -50,3 +51,5 @@ export const MovieResponseList = ({ title }) => {
     </List>
   );
 };
+
+export default MovieResponseList;
