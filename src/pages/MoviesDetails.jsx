@@ -41,7 +41,7 @@ const MoviesDetails = () => {
       }
     };
     getMovieDetails();
-  }, []);
+  }, []); // eslint-disable-line
 
   if (loading) {
     return <Loader />;

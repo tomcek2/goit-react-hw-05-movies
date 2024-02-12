@@ -31,7 +31,7 @@ const Cast = () => {
       }
     };
     getCast();
-  }, [movieId]);
+  }, [movieId]); // eslint-disable-line
 
   return (
     <ul>

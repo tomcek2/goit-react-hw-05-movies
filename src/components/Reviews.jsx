@@ -31,7 +31,7 @@ const Reviews = () => {
       }
     };
     getReviews();
-  }, [movieId]);
+  }, [movieId]); // eslint-disable-line
 
   if (reviews.length === 0) {
     return <p>We don't hane any reviews for this movie.</p>;

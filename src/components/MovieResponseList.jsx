@@ -31,7 +31,7 @@ const MovieResponseList = ({ title }) => {
       }
     };
     getTitleList();
-  }, [title]);
+  }, [title]); // eslint-disable-line
 
   return (
     <List>

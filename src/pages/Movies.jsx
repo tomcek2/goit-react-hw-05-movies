@@ -18,7 +18,7 @@ const Movies = () => {
       setMovieTitle(searchTitle);
       setIsResponse(true);
     }
-  }, []);
+  }, []); // eslint-disable-line
 
   const handleSearch = () => {
     const newTitle = inputRef.current.value.trim();
